@@ -34,7 +34,13 @@ class LoginForm extends Component {
                 </Form.Item>
                 <Form.Item
                     name="password"
-                    rules={[{ required: true, message: 'Please input your Password!' }]}
+                    rules={
+                        [
+                            { required: true, message: 'Please input your Password!' },
+                            { }
+                        ]
+                    
+                    }
                 >
                     <Input
                         prefix={<LockOutlined className="site-form-item-icon" />}

@@ -400,5 +400,25 @@ funcName(){}
 
 
 
+### 8.1 form表单校验
+
+28.05
+
+```js
+<Form.i>
+```
+
+
+
+### 8.2 跨域
+
+命令行
+
+```sh
+npm i http-proxy-middleware
+```
+
+src目录下新建文件setupProxy.js
+
 
 
