@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import './index.scss'
+import { promises } from 'fs-extra';
 
 class LoginForm extends Component {
     constructor(props) {
@@ -37,16 +38,20 @@ class LoginForm extends Component {
                     rules={
                         [
                             { required: true, message: 'Please input your Password!' },
-                            { }
+                            ({getFieldValue})=>({ //es6 解构
+                                validator(rule,value){
+                                    if(value.length<6){
+                                        return Promise.reject('不能小于6位')
+                                    }
+                                    return Promise.resolve()
+                                }
+                            }),
+                            {min:6,message:'不能小于6位'},
+                            {max:20,message:'不能大于20位'},
+                            {pattern:/^(?![0-9]+$)/,message:'xxxxx'}
                         ]
-                    
-                    }
-                >
-                    <Input
-                        prefix={<LockOutlined className="site-form-item-icon" />}
-                        type="password"
-                        placeholder="Password"
-                    />
+                    }>
+                    <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
                 </Form.Item>
                 <Form.Item>
                     <Form.Item name="remember" valuePropName="checked" noStyle>
