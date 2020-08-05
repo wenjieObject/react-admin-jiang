@@ -402,23 +402,82 @@ funcName(){}
 
 ### 8.1 form表单校验
 
-28.05
+
 
 ```js
-<Form.i>
+                <Form.Item
+                    name="password"
+                    rules={
+                        [
+                            { required: true, message: 'Please input your Password!' },
+                            ({getFieldValue})=>({ //es6 解构
+                                validator(rule,value){
+                                    if(value.length<6){
+                                        return Promise.reject('不能小于6位')
+                                    }
+                                    return Promise.resolve()
+                                }
+                            }),
+                            {min:6,message:'不能小于6位'},
+                            {max:20,message:'不能大于20位'},
+                            {pattern:/^(?![0-9]+$)/,message:'xxxxx'}
+                        ]
+                    }>
+                    <Input prefix={<LockOutlined className="site-form-item-icon" />} type="password" placeholder="Password" />
+                </Form.Item>
 ```
 
 
 
 ### 8.2 跨域
 
-命令行
+#### 8.2.1命令行
 
 ```sh
+//显示隐藏文件，不可逆
+npm run eject
+
 npm i http-proxy-middleware
 ```
 
-src目录下新建文件setupProxy.js
+#### 8.2.2 src目录下新建文件setupProxy.js
+
+```js
+const proxy = require("http-proxy-middleware");
+// console.log(1);
+module.exports = function(app) {
+  app.use(proxy("/api", {
+      //配置服务器地址
+      target: "http://m.kugou.com?json=true",
+      changeOrigin: true
+    })
+  );
+//   app.use(
+//     proxy("/fans/**", {
+//       target: "https://easy-mock.com/mock/5c0f31837214cf627b8d43f0/",
+//       changeOrigin: true
+//     })
+//   );
+};
+```
+
+#### 8.2.3 配置paths
+
+config下paths.js 配置
+
+ proxySetup: resolveApp('src/setupProxy.js'),
+
+
+
+### 8.3 axios
+
+44.37
+
+命令行
+
+```sh
+npm install axios -S
+```
 
 
 
