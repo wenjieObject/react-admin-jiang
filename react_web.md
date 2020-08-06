@@ -442,23 +442,27 @@ npm i http-proxy-middleware
 
 #### 8.2.2 src目录下新建文件setupProxy.js
 
+/proxy 替换url的地址
+
+1.地址开头匹配到proxy，开始做代理http://10.40.3.209:5000/api/v1
+
+2./proxy/workcenter/eqp-sub => /workcenter/eqp-sub
+
+3.替换之后的地址http://10.40.3.209:5000/api/v1/workcenter/eqp-sub
+
 ```js
-const proxy = require("http-proxy-middleware");
-// console.log(1);
-module.exports = function(app) {
-  app.use(proxy("/api", {
-      //配置服务器地址
-      target: "http://m.kugou.com?json=true",
-      changeOrigin: true
-    })
-  );
-//   app.use(
-//     proxy("/fans/**", {
-//       target: "https://easy-mock.com/mock/5c0f31837214cf627b8d43f0/",
-//       changeOrigin: true
-//     })
-//   );
-};
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
+module.exports=function(app){
+    app.use(createProxyMiddleware('/proxy',{
+         target: 'http://10.40.3.209:5000/api/v1',     
+         changeOrigin: true ,
+         pathRewrite:{
+             "^/proxy":""
+         }
+        })
+    );
+}
 ```
 
 #### 8.2.3 配置paths
@@ -467,17 +471,101 @@ config下paths.js 配置
 
  proxySetup: resolveApp('src/setupProxy.js'),
 
-
-
 ### 8.3 axios
-
-44.37
 
 命令行
 
 ```sh
 npm install axios -S
 ```
+
+新建request.js文件 处理请求拦截和响应拦截，**baseURL需要与替换地址一致**
+
+```js
+import axios from 'axios'
+
+const service=axios.create({
+    baseURL:'/proxy',
+    timeout:1000,
+});
+
+// 添加请求拦截器
+service.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器
+service.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    return response;
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
+
+  export default service
+```
+
+新建account.js文件 暴露调用服务方法
+
+```js
+import service from '../../src/utils/request'
+
+export function login(data) {
+   return service.request({
+        url: '/workcenter/eqp-sub',
+        method: 'post',
+        //params: data, //适用于get、delete
+        data: data , //适用于post、put
+    });
+}
+```
+
+在前端操作中调用，{login}是上述的方法
+
+```js
+import {login} from '../../api/account'
+    onFinish=()=>{
+        login(this.state.logindata).then(response=>{
+            console.log(response)
+        }).catch(error=>{
+            //reject 走这里
+            console.log(error)
+        });
+    }
+```
+
+#### 8.3.1 拦截器
+
+#### 8.3.2环境变量
+
+create-react-app创建项目内置环境变量NODE_ENV,可通过process.env.NODE_ENV读取变量
+
+**NODE_ENV默认三个值**
+
+1.开发development -npm start
+
+2.测试 test -npm run test
+
+3.生成 production -npm run build
+
+项目打包配置命令行
+
+```sh
+npm install -g dotenv -cil
+```
+
+src下新建三个文件分别对应开发、测试、生产
+
+.env.development  、.env.test 、.env.production
+
+
+
+
 
 
 

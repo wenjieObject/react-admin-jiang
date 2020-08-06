@@ -371,6 +371,7 @@ module.exports = function(webpackEnv) {
                 ),
                 
                 plugins: [
+                  ['import', { libraryName: 'antd', style: 'css' }],
                   [
                     require.resolve('babel-plugin-named-asset-import'),
                     {
@@ -462,8 +463,15 @@ module.exports = function(webpackEnv) {
                   importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
-                'sass-loader'
-              ),
+                'sass-loader',
+                //添加以上代码
+              {
+                loader: 'sass-resources-loader',
+                options: {
+                  resources: path.resolve(__dirname,'../src/styles/main.scss')
+                },
+              },
+            ),
               // Don't consider CSS imports dead code even if the
               // containing package claims to have no side effects.
               // Remove this when webpack adds a warning or an error for this.
@@ -501,6 +509,11 @@ module.exports = function(webpackEnv) {
                 name: 'static/media/[name].[hash:8].[ext]',
               },
             },
+                //添加以下代码
+              {
+                    test:/\.scss$/,
+                    loaders:['style-loader','css-loader','sass-loader']
+              }
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],
