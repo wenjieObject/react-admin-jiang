@@ -559,9 +559,15 @@ create-react-app创建项目内置环境变量NODE_ENV,可通过process.env.NODE
 npm install -g dotenv -cil
 ```
 
+发布测试和打包的命令
+
 src下新建三个文件分别对应开发、测试、生产
 
 .env.development  、.env.test 、.env.production
+
+
+
+###  8.4.解构方式获取state的值，获取验证码接口，倒计时，防止误触
 
 
 
