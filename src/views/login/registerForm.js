@@ -58,9 +58,9 @@ class RegisterForm extends Component {
                         <Checkbox>Remember me</Checkbox>
                     </Form.Item>
 
-                    <a className="login-form-forgot" href="">
+                    <span className="login-form-forgot" >
                         Forgot password
-              </a>
+                    </span>
                 </Form.Item>
 
                 <Form.Item>

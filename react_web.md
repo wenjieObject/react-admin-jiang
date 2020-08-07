@@ -471,7 +471,7 @@ config下paths.js 配置
 
  proxySetup: resolveApp('src/setupProxy.js'),
 
-### 8.3 axios
+### 8.3 axios 暴露api方法
 
 命令行
 
@@ -568,6 +568,89 @@ src下新建三个文件分别对应开发、测试、生产
 
 
 ###  8.4.解构方式获取state的值，获取验证码接口，倒计时，防止误触
+
+react没有vue的双向数据绑定，v-model
+
+**富文本变量使用，倒计时函数**
+
+```js
+    countDown=()=>{
+        //setInterval \ clearInterval 不间断定时器
+        //setTimeout \ clearTimeout 只执行一次
+        let timer=null
+        let sec=60
+        this.setState({
+            code_loading:false,
+            code_text:`${sec}s`,
+            code_disable:true
+        })
+
+        timer=setInterval(() => {
+            sec--
+            if(sec<=0){
+                this.setState({
+                    code_text:'重新获取',
+                    code_disable:false
+                })
+                clearInterval(timer)
+                return false
+            }
+            this.setState({
+                code_text:`${sec}s`
+            })
+        }, 1000);
+
+    }
+```
+
+## 9.组件化类型
+
+### 9.1 无状态组件
+
+纯静态展示的作用，属性（props）加一个渲染函数（render）。复用性比较强，比如button
+
+### 9.2 有状态组件
+
+组件内部包含状态state，通常有生命周期
+
+**示例**
+
+抽离组件和方法
+
+组件传值
+
+```js
+//获取父组件的传值   
+componentWillReceiveProps(value){
+        console.log(value)
+    }
+```
+
+
+
+14
+
+### 9.3 UI组件
+
+类似无状态组件，负责数据渲染
+
+### 9.4 容器组件
+
+axios数据获取及业务逻辑处理，不负责数据渲染
+
+### 9.5 高阶组件
+
+
+
+### 9.6 回调渲染
+
+
+
+
+
+
+
+
 
 
 
