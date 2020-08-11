@@ -91,7 +91,7 @@ class Code extends Component {
 
     render() {
 
-        const {username,code_loading,code_text,code_disable} =this.state;
+        const {code_loading,code_text,code_disable} =this.state;
 
         return (
             <Button type="danger" disabled={code_disable} loading={code_loading} block onClick={this.getCode}>

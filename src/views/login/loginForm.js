@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Checkbox,message } from 'antd';
-import { UserOutlined, LockOutlined,PoweroffOutlined  } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox } from 'antd';
+import { UserOutlined, LockOutlined  } from '@ant-design/icons';
 import './index.scss'
 //api
 import {login} from '../../api/account'
@@ -35,9 +35,10 @@ class LoginForm extends Component {
             USER_NO: "digiwin"
         }];
         login(logindata).then(response => {
-            console.log(response)
+            //console.log(response)
+
         }).catch(error => {
-            console.log(error)
+            //console.log(error)
         });
     }
 
@@ -47,7 +48,7 @@ class LoginForm extends Component {
 
     render() {
         const {username} =this.state;
-        const _this=this;
+        //const _this=this;
         return (
             <Form
                 name="normal_login"

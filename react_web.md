@@ -797,7 +797,46 @@ const pwd=CryptoJs.MD5(password).tostring()
 
 
 
+
+
 ## 13.配置路由，生成侧边栏菜单，点击菜单显示内容
+
+
+
+
+
+## 14.菜单刷新，收起展开，withRouter，存储到cookie
+
+
+
+
+
+## 15.自动化工程生成组件
+
+
+
+```js
+/**
+ * '../../views' 扫描的路径
+ * true是否扫描文件下的子文件
+ * /\.js$/ 匹配的文件类型
+*/
+const files =require.context('../../views',true,/\.js$/);
+```
+
+
+
+
+
+## 16.react-cookie
+
+
+
+sessionStorage:当前会话，关闭浏览器窗口销毁。
+
+localStorage：永远不会消失，主动清除。
+
+cookie：设置过期之前，关闭浏览器不会消失。
 
 
 
