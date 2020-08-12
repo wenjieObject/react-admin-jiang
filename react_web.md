@@ -960,6 +960,8 @@ this.props.location.state.name
 
 
 
+## 21.table组件封装，页码
+
 
 
 
