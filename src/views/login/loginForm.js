@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Form, Input, Button, Checkbox } from 'antd';
 import { UserOutlined, LockOutlined  } from '@ant-design/icons';
 import './index.scss'
+import {withRouter} from 'react-router-dom';
+
 //api
 import {login} from '../../api/account'
 
@@ -29,6 +31,8 @@ class LoginForm extends Component {
     //登录
     onFinish=()=>{
 
+        this.props.history.push("/index");
+        return;
         const logindata = [{
             PASSWORD: "digiwin",
             TYPE: "webadmin",
@@ -36,7 +40,7 @@ class LoginForm extends Component {
         }];
         login(logindata).then(response => {
             //console.log(response)
-
+            this.props.history.push("/index");
         }).catch(error => {
             //console.log(error)
         });
@@ -90,4 +94,4 @@ class LoginForm extends Component {
     }
 }
 
-export default LoginForm;
+export default withRouter(LoginForm);

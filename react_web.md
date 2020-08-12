@@ -1,4 +1,4 @@
-
+​	
 
 ## 1.脚手架、git仓库
 
@@ -830,13 +830,133 @@ const files =require.context('../../views',true,/\.js$/);
 
 ## 16.react-cookie
 
+命令行
+
+```sh
+npm install react-cookies --save 
+```
+
+使用
+
+```js
+import cookies from 'react-cookies'
+cookies.load('xxx')
+```
+
+.load
+
+.save
+
+.remove
+
+**1.sessionStorage:当前会话，关闭浏览器窗口销毁。**
+
+**2.localStorage：永远不会消失，主动清除。**
+
+**3.cookie：设置过期之前，关闭浏览器不会消失。**
 
 
-sessionStorage:当前会话，关闭浏览器窗口销毁。
 
-localStorage：永远不会消失，主动清除。
+### 16.1请求拦截添加token
 
-cookie：设置过期之前，关闭浏览器不会消失。
+
+
+### 16.2 防止连续触发
+
+按钮添加loading效果
+
+
+
+## 17.响应拦截、全局处理
+
+
+
+## 18.react生命周期，如何使用
+
+constructor
+
+```js
+    //生命周期挂载完成
+    componentDidMount(){
+       //这里加载数据
+    }
+```
+
+
+
+## 19.引用路径配置
+
+
+
+在webpack.config.js中
+
+```js
+'@':path.resolve('src')
+'@c':path.resolve('src/components')
+'@api':path.resolve('src/api')
+
+//使用
+import {GetList,Delete} from "../../src/api/department"
+||
+import {GetList,Delete} from "@api/department"
+```
+
+## 20.路由传参
+
+
+
+1. params传参（参数会在地址栏展示）
+
+   1. 路由页面
+
+   2. 链接方式
+
+      ```js
+      improt {Link} from "react-router-dom"
+      //传参
+      <Link to={'/link/'+'param'}>xx </Link>
+      ```
+
+   3. js方式
+
+      
+
+   4. 获取参数
+
+    
+
+   ```js
+   //获取url参数
+   this.props.match
+   ```
+
+   
+
+2. query传参（刷新页面，参数消失）
+
+   ```js
+   <Link to={{pathname:'/link',query:{id:'12'}}}>xx </Link>
+   ```
+
+   获取参数
+
+   ```js
+   this.props.location.query.name
+   ```
+
+
+
+3. state传参（参数加密）
+
+```js
+<Link to={{pathname:'/link',state:{id:'12'}}}>xx </Link>
+```
+
+​         获取参数
+
+```js
+this.props.location.state.name
+```
 
 
 
