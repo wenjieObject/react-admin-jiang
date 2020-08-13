@@ -2,7 +2,7 @@ export const router=[
 
     {
         title:'控制台',
-        icon:'laptop',
+        icon:'home',
         key:'/index',
     },
     {
@@ -36,6 +36,34 @@ export const router=[
                 },
 
             ]
+    },
+    {
+        title:'部门管理',
+        icon:'bars',
+        key:'/index/department',
+        child:[
+            {key:'/index/department/list',title:'部门列表',icon:''},
+            {key:'/index/department/add',title:'添加部门',icon:''},
+        ]
+    },
+    {
+        title:'职位管理',
+        icon:'edit',
+        key:'/index/entry',
+        child:[
+            {key:'/index/entry/dropdown',title:'职位列表',icon:''},
+            {key:'/index/entry/menu',title:'添加职位',icon:''},
+        ]
+    },
+    {
+        title:'请假',
+        icon:'info-circle-o',
+        key:'/index/about',
+    },
+    {
+        title:'加班',
+        icon:'info-circle-o',
+        key:'/index/earn',
     },
 ];
 

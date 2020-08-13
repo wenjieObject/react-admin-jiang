@@ -791,17 +791,220 @@ const pwd=CryptoJs.MD5(password).tostring()
 
 
 
+路由跳转
+
+```js
+import {withRouter} from 'react-router-dom';
+
+//登录跳转
+ this.props.history.push("/index");
+
+export default withRouter(LoginForm);
+```
+
 
 
 ## 12.私有化组件、存储token 安全机制进入后台首页
 
 
 
+```js
+//路由写法
+<Route exact  path="/" render={()=><Login/>}/>
+```
+
+### 12.1 设置session
+
+
+
+```js
+
+export function setToken(value){
+    sessionStorage.setItem("adminToken",value);
+}
+
+export function getToken(){
+   return sessionStorage.getItem("adminToken");
+}
+```
+
+### 12.2 登录写入session
+
+```js
+//session
+
+import {setToken} from '@/utils/session'
+
+setToken("6F9619FF-8B86-D011-B42D-00C04FC964FF");
+
+```
+
+### 12.3 判断登录、私有化组件
+
+```js
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import {  getToken } from '@/utils/session'
+
+const PrivateRouter = ({ component: Component, ...rest }) => {
+    return (
+        <Route {...rest} render={(props) => (
+            getToken()!==null
+            ?<Component {...props} /> 
+            :<Redirect to='/' />
+        )} />
+    )
+}
+
+export default PrivateRouter;
+```
+
 
 
 ## 13.配置路由，生成侧边栏菜单，点击菜单显示内容
 
 
+
+### 13.1 app.js中index路由不能设置exact
+
+```js
+      <BrowserRouter>
+        <Switch>
+            <Route  exact path="/" component={Login}/>
+            <PrivateRouter  path="/index" component={Index}/>
+        </Switch>
+      </BrowserRouter>
+```
+
+
+
+### 13.2 遍历菜单展示
+
+
+
+```js
+
+  //无子级菜单
+  //Link 点击菜单展示主项
+  renderMenu = ({ title, key }) => {
+    return (<Menu.Item key={key} >
+      <Link to={key}>{title}</Link>
+    </Menu.Item>)
+  }
+  //子级菜单
+  renderSubMenu = ({ title, key, child }) => {
+
+    return (
+      <SubMenu key={key} title={title}>
+        {
+          child && child.map(item => {
+            return item.child && item.child.length > 0 ? this.renderSubMenu(item) : this.renderMenu(item)
+          })
+        }
+      </SubMenu>
+    )
+  }
+  
+  //render
+      return (
+      <Menu
+        mode="inline"
+        theme="dark"
+        onOpenChange={this.onOpenChange}
+        style={{ height: '100%', paddingTop: '50px' }}
+        openKeys={openKeys}
+      >
+        {
+          router && router.map(firstItem => {
+            return firstItem.child && firstItem.child.length > 0
+              ? this.renderSubMenu(firstItem)
+              : this.renderMenu(firstItem)
+          })
+        }
+      </Menu>
+    );
+```
+
+### 13.3 内容区域
+
+```js
+import React, { Component, Fragment } from 'react';
+import { Switch, Route, BrowserRouter } from 'react-router-dom';
+
+//组件
+import DepartMentAdd from '@/views/department/add';
+import DepartMentList from '@/views/department/list';
+
+//私有组件
+import PrivateRouter from '@/components/privateRouter/index'
+
+class ContainMain extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+    render() {
+        return (
+
+            <Switch>
+                <PrivateRouter path='/index/department/add' component={DepartMentAdd} />
+                <PrivateRouter path='/index/department/list' component={DepartMentList} />
+            </Switch>
+
+        );
+    }
+}
+
+export default ContainMain;
+```
+
+
+
+### 13.4 主体框架
+
+
+
+```js
+
+import React, { Component } from 'react';
+
+//css
+import './layout.scss'
+//antd
+import { Layout } from 'antd';
+
+//自定义组件
+import AsideMenu from '@/components/asideMenu/index'
+
+import ContainMain from '../../components/containMain/index'
+
+const { Sider, Header, Content } = Layout;
+
+
+class Index extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {}
+    }
+    render() {
+        return (
+            <Layout className="layout-wrap">
+                <Sider width='250px'>
+                    <AsideMenu></AsideMenu>
+                </Sider>
+                <Layout>
+                    <Header className='layout-header'>Header</Header>
+                    <Content className='layout-main'>
+                        <ContainMain></ContainMain>
+                    </Content>
+                </Layout>
+            </Layout>
+        );
+    }
+}
+
+export default Index;
+```
 
 
 
@@ -891,14 +1094,13 @@ constructor
 在webpack.config.js中
 
 ```js
-'@':path.resolve('src')
-'@c':path.resolve('src/components')
-'@api':path.resolve('src/api')
+alias: {
+        // 路径引用 @
+        '@': paths.appSrc,
+      },
 
 //使用
-import {GetList,Delete} from "../../src/api/department"
-||
-import {GetList,Delete} from "@api/department"
+import AsideMenu from '@/components/asideMenu/index'
 ```
 
 ## 20.路由传参

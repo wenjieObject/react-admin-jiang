@@ -4,6 +4,10 @@ import {Switch,Route,BrowserRouter} from 'react-router-dom';
 import Login from './views/login/index';
 import Index from './views/index/index';
 
+
+//私有组件
+import PrivateRouter from '@/components/privateRouter/index'
+
  class App extends Component {
    constructor(props) {
      super(props);
@@ -11,11 +15,10 @@ import Index from './views/index/index';
    }
    render() { 
      return ( 
- 
       <BrowserRouter>
         <Switch>
-            <Route exact  path="/" component={Login}/>
-            <Route exact  path="/index" component={Index}/>
+            <Route  exact path="/" component={Login}/>
+            <PrivateRouter  path="/index" component={Index}/>
         </Switch>
       </BrowserRouter>
        );

@@ -3,18 +3,20 @@ import React, { Component } from 'react';
 //css
 import './layout.scss'
 //antd
-import {Layout} from 'antd';
+import { Layout } from 'antd';
 
 //自定义组件
-import AsideMenu from '../../components/asideMenu/index'
+import AsideMenu from '@/components/asideMenu/index'
 
-const {Sider,Header,Content}=Layout;
+import ContainMain from '../../components/containMain/index'
+
+const { Sider, Header, Content } = Layout;
 
 
 class Index extends Component {
     constructor(props) {
         super(props);
-        this.state = {  }
+        this.state = {}
     }
     render() {
         return (
@@ -24,11 +26,13 @@ class Index extends Component {
                 </Sider>
                 <Layout>
                     <Header className='layout-header'>Header</Header>
-                    <Content className='layout-main'>Content</Content>
+                    <Content className='layout-main'>
+                        <ContainMain></ContainMain>
+                    </Content>
                 </Layout>
             </Layout>
         );
     }
 }
- 
+
 export default Index;

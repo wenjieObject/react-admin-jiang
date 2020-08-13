@@ -9,6 +9,9 @@ import {login} from '../../api/account'
 
 //组件
 import Code from '../../components/code'
+//session
+
+import {setToken} from '@/utils/session'
 
 class LoginForm extends Component {
     constructor(props) {
@@ -31,6 +34,7 @@ class LoginForm extends Component {
     //登录
     onFinish=()=>{
 
+        setToken("6F9619FF-8B86-D011-B42D-00C04FC964FF");
         this.props.history.push("/index");
         return;
         const logindata = [{
