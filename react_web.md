@@ -1012,6 +1012,67 @@ export default Index;
 
 
 
+### 14.1菜单收起展开
+
+
+
+```js
+                <Sider collapsed={this.state.collapsed}>
+                    <Button type="primary" onClick={this.toggleCollapsed} style={{ marginLeft:'20px'}}>
+                        {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
+                    </Button>
+                    <AsideMenu></AsideMenu>
+                </Sider>
+```
+
+
+
+### 14.2 刷新选中菜单
+
+
+
+openKeys是指父级菜单
+
+selectedKeys是最子集菜单
+
+```js
+        <Menu
+          //openKeys={openKeys}
+          //selectedKeys={openKeys}
+          mode="inline"
+          theme="dark"
+          onOpenChange={this.onOpenChange}
+          style={{ height: '100%', paddingTop: '50px' }}
+          openKeys={openKeys}
+        >
+          {
+            router && router.map(firstItem => {
+              return firstItem.child && firstItem.child.length > 0
+                ? this.renderSubMenu(firstItem)
+                : this.renderMenu(firstItem)
+            })
+          }
+        </Menu>
+```
+
+
+
+```js
+  componentDidMount(){
+    console.log(this.props.location.pathname)
+     
+    const pathnames=this.props.location.pathname.split('/').slice(0,3).join('/');
+    console.log(pathnames)
+    this.setState({
+      openKeys: [pathnames]
+    })
+  }
+
+export default withRouter(AsideMenu);
+```
+
+
+
 
 
 ## 15.自动化工程生成组件

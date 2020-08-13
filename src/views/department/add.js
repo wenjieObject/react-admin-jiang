@@ -34,6 +34,8 @@ class DepartMentAdd extends Component {
  
     render() {
         return (
+          <Fragment>
+            <br></br>
             <Form {...layout} name="nest-messages" onFinish={this.onFinish} validateMessages={validateMessages}>
             <Form.Item name={['user', 'name']} label="Name" rules={[{ required: true }]}>
               <Input />
@@ -56,6 +58,7 @@ class DepartMentAdd extends Component {
               </Button>
             </Form.Item>
           </Form>
+          </Fragment>
         );
     }
 }

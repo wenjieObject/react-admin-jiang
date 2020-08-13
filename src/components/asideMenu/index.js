@@ -1,15 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 
 //antd
 import { Menu } from 'antd';
-//import { AppstoreOutlined, PieChartOutlined, DesktopOutlined, ContainerOutlined, MailOutlined, } from '@ant-design/icons';
-
 //router
 import { router } from '../../router/index'
 //
-import {  Link } from 'react-router-dom';
+import { Link,withRouter } from 'react-router-dom';
 
-
+import { DesktopOutlined} from '@ant-design/icons';
 const { SubMenu } = Menu;
 
 
@@ -17,23 +15,34 @@ class AsideMenu extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      openKeys: []
+      openKeys: [],
+      collapsed: false,
+       
     }
   }
 
-  //一级菜单
+  componentDidMount(){
+    console.log(this.props.location.pathname)
+     
+    const pathnames=this.props.location.pathname.split('/').slice(0,3).join('/');
+    console.log(pathnames)
+    this.setState({
+      openKeys: [pathnames]
+    })
+  }
 
+  //一级菜单
   renderMenu = ({ title, key }) => {
-    return (<Menu.Item key={key} >
+    return (<Menu.Item key={key} icon={<DesktopOutlined />} >
       <Link to={key}>{title}</Link>
     </Menu.Item>)
   }
-  //子级菜单
 
+  //子级菜单
   renderSubMenu = ({ title, key, child }) => {
 
     return (
-      <SubMenu key={key} title={title}>
+      <SubMenu key={key} title={title} icon={<DesktopOutlined />}>
         {
           child && child.map(item => {
             return item.child && item.child.length > 0 ? this.renderSubMenu(item) : this.renderMenu(item)
@@ -45,8 +54,7 @@ class AsideMenu extends Component {
   }
 
   onOpenChange = (openKeys) => {
-    //console.log(openKeys)
-
+    console.log(openKeys)
     if (openKeys.length === 1 || openKeys.length === 0) {
       this.setState({
         openKeys: openKeys
@@ -73,23 +81,29 @@ class AsideMenu extends Component {
   render() {
     const { openKeys } = this.state;
     return (
-      <Menu
-        mode="inline"
-        theme="dark"
-        onOpenChange={this.onOpenChange}
-        style={{ height: '100%', paddingTop: '50px' }}
-        openKeys={openKeys}
-      >
-        {
-          router && router.map(firstItem => {
-            return firstItem.child && firstItem.child.length > 0
-              ? this.renderSubMenu(firstItem)
-              : this.renderMenu(firstItem)
-          })
-        }
-      </Menu>
+      <Fragment>
+
+
+        <Menu
+          //openKeys={openKeys}
+          //selectedKeys={openKeys}
+          mode="inline"
+          theme="dark"
+          onOpenChange={this.onOpenChange}
+          style={{ height: '100%', paddingTop: '50px' }}
+          openKeys={openKeys}
+        >
+          {
+            router && router.map(firstItem => {
+              return firstItem.child && firstItem.child.length > 0
+                ? this.renderSubMenu(firstItem)
+                : this.renderMenu(firstItem)
+            })
+          }
+        </Menu>
+      </Fragment>
     );
   }
 }
 
-export default AsideMenu;
+export default withRouter(AsideMenu);

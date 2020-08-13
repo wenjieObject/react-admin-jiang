@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 //css
 import './layout.scss'
 //antd
-import { Layout } from 'antd';
+import { Layout, Button } from 'antd';
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 
 //自定义组件
 import AsideMenu from '@/components/asideMenu/index'
@@ -16,12 +17,24 @@ const { Sider, Header, Content } = Layout;
 class Index extends Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            collapsed: false,
+        }
     }
+
+    toggleCollapsed = () => {
+        this.setState({
+            collapsed: !this.state.collapsed,
+        });
+    };
+
     render() {
         return (
             <Layout className="layout-wrap">
-                <Sider width='250px'>
+                <Sider collapsed={this.state.collapsed}>
+                    <Button type="primary" onClick={this.toggleCollapsed} style={{ marginLeft:'20px'}}>
+                        {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined)}
+                    </Button>
                     <AsideMenu></AsideMenu>
                 </Sider>
                 <Layout>

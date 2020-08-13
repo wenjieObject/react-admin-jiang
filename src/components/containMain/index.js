@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from 'react';
-import { Switch, Route, BrowserRouter } from 'react-router-dom';
+import React, { Component } from 'react';
+import { Switch  } from 'react-router-dom';
 
 //组件
 import DepartMentAdd from '@/views/department/add';
