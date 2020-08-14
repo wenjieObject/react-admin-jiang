@@ -1359,5 +1359,149 @@ table 每行添加按钮,及传递函数
 
 
 
+### 21.1封装table
+
+封装table，传入api地址，渲染数据
+
+```js
+import React, { Component, Fragment } from 'react';
+
+import { Form, Input, Button, Radio, Table } from 'antd';
+
+class TableCommon extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dataSource:[]
+
+        }
+    }
+
+    loadData=()=>{
+        const { url } = this.props;
+        console.log(url);
+        let data=[];
+        for (let i = 0; i < 100; i++) {
+            data.push({
+              key: i,
+              name: `Edward King ${i}`,
+              age: 32,
+              address: `London, Park Lane no. ${i}`,
+            });
+          }
+          this.setState({
+            dataSource:data
+          })
+    }
+
+    componentDidMount() {
+        //通过传入的url查询数据
+        this.loadData();        
+    }
+
+    render() {
+        const { columns,  rowKey,rowSelection } = this.props;
+        return (
+            <Fragment>
+                <Table columns={columns}
+                    rowKey={rowKey}
+                    rowSelection={rowSelection?rowSelection:false}
+                    dataSource={this.state.dataSource}
+                    pagination={{ pageSize: 50 }}
+                    bordered
+                    scroll={{ y: 340 }} />,
+            </Fragment>
+        );
+    }
+}
+
+export default TableCommon;
+```
+
+
+
+使用封装的table
+
+```js
+
+import React, { Component, Fragment } from 'react';
+
+import { Form, Input, Button, Radio,Table  } from 'antd';
+
+import {Link} from "react-router-dom"
+
+import TableCommon from '@/components/tableCommon/index'
+
+class DepartMentList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            columns :[
+                {
+                  title: 'Name',
+                  dataIndex: 'name',
+                  width: 150,
+                },
+                {
+                  title: 'Age',
+                  dataIndex: 'age',
+                  width: 150,
+                },
+                {
+                  title: 'Address',
+                  dataIndex: 'address',
+                  width: 300,
+                },
+                {
+                    title: 'operation',
+                    dataIndex: 'operation',
+                    render:(text,rowData)=>{
+                        return (
+                            <div className='inline-button'>
+                                <Button  type='primary'><Link to={{pathname:'/index/department/add',query:{id:'12'}}}>编辑</Link></Button>
+                            </div>
+                        )
+                    }                     
+                },
+              ],
+               
+        }
+    }
+
+    editBtnClick=(e)=>{
+        //console.log(e)
+    }
+
+
+    render() {
+
+        const {columns,data}=this.state;
+        return (
+            <Fragment>
+                <Form layout="inline" style={{margin:'10px'}}>
+                    <Form.Item label="Field A">
+                        <Input placeholder="input placeholder" />
+                    </Form.Item>
+                    <Form.Item label="Field B">
+                        <Input placeholder="input placeholder" />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary">Submit</Button>
+                    </Form.Item>
+                </Form>
+                <TableCommon rowSelection={true} columns={columns} url='xxx'  rowKey="key"  />
+                {/* <Table columns={columns} rowKey="key" dataSource={data} pagination={{ pageSize: 50 }} scroll={{ y: 340 }} />, */}
+
+            </Fragment>);
+    }
+}
+
+export default DepartMentList;
+```
+
+
+
+
+
 
 
