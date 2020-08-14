@@ -1037,7 +1037,6 @@ selectedKeys是最子集菜单
 
 ```js
         <Menu
-          //openKeys={openKeys}
           //selectedKeys={openKeys}
           mode="inline"
           theme="dark"
@@ -1079,16 +1078,47 @@ export default withRouter(AsideMenu);
 
 
 
+在生成主体内容区域的时候遍历项目文件
+
 ```js
+//自动化工程
 /**
  * '../../views' 扫描的路径
  * true是否扫描文件下的子文件
  * /\.js$/ 匹配的文件类型
 */
-const files =require.context('../../views',true,/\.js$/);
+const files = require.context('@/views/', true, /\.js$/);
+const componentFiles = [];
+files.keys().map(key => {
+    //console.log(key)
+    //console.log(files(key).default)
+    if (key.includes('./index/') || key.includes('./login/')) {
+        return false
+    }
+
+    const splitFileName = key.split('.');
+    const path = '/index' + splitFileName[1].toLowerCase();
+    const component = files(key).default;
+    const jsonObj = {};
+    jsonObj.path = path
+    jsonObj.component = component
+    componentFiles.push(jsonObj);
+})
 ```
 
+遍历展示路由
 
+```js
+           <Switch>
+                {
+                    componentFiles.map(item => {
+                        return < PrivateRouter key={item.path} path={item.path} component={item.component} />
+                    })
+                }
+                {/* <PrivateRouter path='/index/department/add' component={DepartMentAdd} />
+                <PrivateRouter path='/index/department/list' component={DepartMentList} /> */}
+            </Switch>
+```
 
 
 
@@ -1104,14 +1134,26 @@ npm install react-cookies --save
 
 ```js
 import cookies from 'react-cookies'
-cookies.load('xxx')
+
+//存储cookie
+export function setToken(value){
+    cookies.save('adminToken',value)
+}
+//获取cookie
+export function getToken(value){
+   return cookies.load('adminToken')
+}
+//存储username
+export function setUsername(value){
+    cookies.save('username',value)
+}
+//获取username
+export function getUsername(value){
+    return cookies.load('username')
+}
 ```
 
-.load
-
-.save
-
-.remove
+ 
 
 **1.sessionStorage:当前会话，关闭浏览器窗口销毁。**
 
@@ -1132,6 +1174,60 @@ cookies.load('xxx')
 
 
 ## 17.响应拦截、全局处理
+
+
+
+axios的全局处理
+
+```js
+import axios from 'axios'
+import {getToken} from '@/utils/cookies'
+import { message } from 'antd';
+
+const service=axios.create({
+    baseURL:'/proxy',
+    timeout:1000,
+});
+
+// 添加请求拦截器
+service.interceptors.request.use(function (config) {
+    // 在发送请求之前做些什么
+    config.headers['Token']=getToken()
+    return config;
+  }, function (error) {
+    // 对请求错误做些什么
+    return Promise.reject(error);
+  });
+
+// 添加响应拦截器
+service.interceptors.response.use(function (response) {
+    // 对响应数据做点什么
+    const data =response.data;
+    if(data.resCode !== 0){
+      //弹窗报错
+      message.info(data.message)
+      return Promise.reject(response);
+    }else{
+      return response;
+    }
+  }, function (error) {
+    // 对响应错误做点什么
+    return Promise.reject(error);
+  });
+
+  export default service
+```
+
+调用api,响应的Promise.reject(response);会触发到下面api的catch
+
+```js
+        login(logindata).then(response => {
+            //console.log(response)
+            this.props.history.push("/index");
+        }).catch(error => {
+            //console.log(error)
+        });
+```
 
 
 
@@ -1175,9 +1271,10 @@ import AsideMenu from '@/components/asideMenu/index'
    2. 链接方式
 
       ```js
-      improt {Link} from "react-router-dom"
+      import {Link} from "react-router-dom"
       //传参
-      <Link to={'/link/'+'param'}>xx </Link>
+      
+      
       ```
 
    3. js方式
@@ -1198,7 +1295,7 @@ import AsideMenu from '@/components/asideMenu/index'
 2. query传参（刷新页面，参数消失）
 
    ```js
-   <Link to={{pathname:'/link',query:{id:'12'}}}>xx </Link>
+    <Button  type='primary'><Link to={{pathname:'/index/department/add',query:{id:'12'}}}>编辑</Link></Button>
    ```
 
    获取参数
@@ -1226,6 +1323,39 @@ this.props.location.state.name
 ## 21.table组件封装，页码
 
 
+
+table 每行添加按钮,及传递函数
+
+```js
+            columns :[
+                {
+                  title: 'Name',
+                  dataIndex: 'name',
+                  width: 150,
+                },
+                {
+                  title: 'Age',
+                  dataIndex: 'age',
+                  width: 150,
+                },
+                {
+                  title: 'Address',
+                  dataIndex: 'address',
+                  width: 300,
+                },
+                {
+                    title: 'operation',
+                    dataIndex: 'operation',
+                    render:(text,rowData)=>{
+                        return (
+                            <div className='inline-button'>
+                                <Button onClick={()=>this.editBtnClick(rowData)} type='primary'>编辑</Button>
+                            </div>
+                        )
+                    }                     
+                },
+              ],
+```
 
 
 

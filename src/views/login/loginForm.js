@@ -10,8 +10,9 @@ import {login} from '../../api/account'
 //组件
 import Code from '../../components/code'
 //session
-
-import {setToken} from '@/utils/session'
+//cookie
+//import {setToken} from '@/utils/session'
+import {setToken} from '@/utils/cookies'
 
 class LoginForm extends Component {
     constructor(props) {

@@ -22,10 +22,10 @@ class AsideMenu extends Component {
   }
 
   componentDidMount(){
-    console.log(this.props.location.pathname)
+    //console.log(this.props.location.pathname)
      
     const pathnames=this.props.location.pathname.split('/').slice(0,3).join('/');
-    console.log(pathnames)
+    //console.log(pathnames)
     this.setState({
       openKeys: [pathnames]
     })
@@ -54,7 +54,7 @@ class AsideMenu extends Component {
   }
 
   onOpenChange = (openKeys) => {
-    console.log(openKeys)
+    //console.log(openKeys)
     if (openKeys.length === 1 || openKeys.length === 0) {
       this.setState({
         openKeys: openKeys
