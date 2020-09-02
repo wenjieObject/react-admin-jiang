@@ -366,56 +366,6 @@ export default RegisterForm;
 
 
 
-### 6.3 父组件调用子组件方法
-
-
-
-父组件代码
-
-```js
-import React, {Component} from 'react';
-
-export default class Parent extends Component {
-   render() {
-       return(
-           <div>
-               <Child onRef={this.onRef} />
-               <button onClick={this.click} >click</button>
-           </div>
-       )
-   }
-
-   onRef = (ref) => {
-       this.child = ref
-   }
-
-   click = (e) => {
-       this.child.myName()
-   }
-
-}
-```
-
-
-
-子组件
-
-```js
-class Child extends Component {
-   componentDidMount(){
-       this.props.onRef(this)
-   }
-
-   myName = () => alert('kaysen')
-
-   render() {
-       return ('hello world!')
-   }
-}
-```
-
-
-
 ## 7.react 函数定义方式
 
 ### 7.1箭头函数
@@ -443,26 +393,6 @@ funcName(){}
 ### 7.4 箭头函数
 
 （data）=>{this.funcName}
-
-
-
-### 7.5 方法修改this指向
-
-
-
-```js
-//在constructor里面写以下语句
-this.changePage=this.changePage.bind(this)
-
-    changePage(current) {
-        //console.log(this)
-        const { condition } = this.props;
-        condition.page=current-1;
-        this.loadData(condition);
-    }
-```
-
-
 
 
 
