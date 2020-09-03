@@ -368,7 +368,10 @@ export default RegisterForm;
 
 ### 6.3 父组件调用子组件方法
 
+1. **在父组件或者子组件的实例**
 
+2. **在子组件调用父组件的方法，并把子组件的实例传给父组件**
+3. **通过实例调用子组件的方法**
 
 父组件代码
 
@@ -1431,6 +1434,24 @@ table 每行添加按钮,及传递函数
 
 ### 21.1封装table
 
+
+
+table 列添加元素
+
+```js
+  columns :[
+                {
+                  title: 'destOperationCode',
+                  dataIndex: 'destOperationCode',
+                  width: 250,
+                  render:(destOperationCode,rowData)=>{
+                      return <a href={rowData.destOperationCode}>{destOperationCode}</a>
+                  }
+                },
+```
+
+
+
 封装table，传入api地址，渲染数据
 
 ```js
@@ -1570,6 +1591,332 @@ export default DepartMentList;
 ```
 
 
+
+### 21.2 table二次封装 
+
+1. 在父组件或者子组件的实例
+
+2. 在子组件调用父组件的方法，并把子组件的实例传给父组件
+3. 通过实例调用子组件的方法
+
+#### 21.2.1 删除方法封装
+
+**TableCommon封装批量删除方法**
+
+**父组件传入删除api**
+
+表格组件封装TableCommon
+
+```js
+import React, { Component, Fragment } from 'react';
+
+import { Button,  message,Table,Modal } from 'antd';
+
+import service from '../../utils/request'
+
+class TableCommon extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            dataSource: [],
+            current: 1,
+            total: 0,
+            pageSize: 20,
+            condition:{},
+            loadingTable:false,
+            visible:false,
+            confirmLoading:false,
+            selectRowKeys:[],
+        }
+        this.changePage=this.changePage.bind(this)
+        this.changePageSize=this.changePageSize.bind(this)
+
+    }
+
+   
+    loadData = (condition) => {
+
+        condition.page=this.state.current-1
+        condition.size=this.state.pageSize
+
+
+        this.setState({
+            loadingTable:true
+        });
+        service.request({
+            url: this.props.url,
+            method: 'post',
+            data: condition
+        }).then(data => {
+            var result = data.data
+            this.setState({
+                dataSource: result.content,
+                current: result.number +1  ,
+                total: result.totalElements,
+                pageSize: result.size,
+                loadingTable:false
+            })
+        }).catch(e => {
+            this.setState({
+                loadingTable:true
+            });
+        });
+    }
+
+    componentDidMount() {
+        //console.log(this)
+        const { condition } = this.props;
+        //通过传入的url查询数据
+        this.loadData(condition);
+        this.props.onRef(this)
+    }
+
+    // 回调函数，切换下一页
+    changePage(current) {
+         
+        //console.log(_self)
+        const { condition } = this.props;
+        this.setState({
+            current
+        },()=>{
+            this.loadData(condition);
+        })
+    }
+
+    // 回调函数,每页显示多少条
+    changePageSize(current, pageSize) {
+        const { condition } = this.props;
+        this.setState({
+            current:1,
+            pageSize:pageSize
+        },()=>{
+            this.loadData(condition);
+        })
+        
+    }
+
+    //确认删除操作
+    modalThen=()=>{
+        this.setState({
+            confirmLoading:true
+        })
+        
+        message.info('删除成功'+this.props.deleteurl);
+
+        this.setState({
+            confirmLoading:false,
+            visible:false
+        })
+    }
+
+    showModal=()=>{
+
+        //如果没有勾选return
+        const {selectRowKeys} =this.state
+        if(!selectRowKeys || selectRowKeys.length===0){
+            message.info('请选择数据');
+            return
+        }
+        this.setState({
+            visible:true
+        })
+    }
+
+    selectionChage=(value)=> {
+        //console.log(value)
+        this.setState({
+            selectRowKeys:value
+        })
+    }
+
+
+    render() {
+        const { columns, rowKey } = this.props;
+        const { dataSource,loadingTable } = this.state
+        const rowSelection={
+            onChange:this.selectionChage
+        }
+
+        return (
+            <Fragment>
+                <Table columns={columns}
+                    rowKey={rowKey}
+                    size="middle"
+                    rowSelection={true ? rowSelection : false}
+                    dataSource={dataSource}
+                    bordered
+                    loading={loadingTable}
+                    // 分页
+                    pagination={{
+                        current: this.state.current,
+                        total: this.state.total,
+                        onChange: this.changePage,
+                        pageSize: this.state.pageSize,
+                        onShowSizeChange: this.changePageSize,
+                    }}
+                    scroll={{ y: 380 }}
+                />
+              <Button type="primary" onClick={this.showModal}>批量删除</Button>
+                {/*批量删除确认弹窗*/}
+                <Modal
+                    title="提示"
+                    visible={this.state.visible}
+                    onOk={this.modalThen}
+                    onCancel={()=>{this.setState({visible:false})}}
+                    okText="确认"
+                    cancelText="取消"
+                    confirmLoading={this.state.confirmLoading}
+                >
+                    <p className="text-center">确定删除此信息？，删除无法恢复</p>
+                </Modal>
+            </Fragment>
+        );
+    }
+}
+
+export default TableCommon;
+```
+
+父组件调用表格组件
+
+inData,logTimeBegin,logTimeEnd 是自定义参数，page和size是固定参数
+
+```js
+import React, { Component,Fragment } from 'react';
+import { Form, Input, Button,DatePicker } from 'antd';
+import TableCommon from '@/components/tableCommon/index'
+
+const { RangePicker } = DatePicker;
+
+class EsblogList extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { 
+            columns :[
+                {
+                  title: 'destOperationCode',
+                  dataIndex: 'destOperationCode',
+                  width: 250,
+                },
+                {
+                  title: 'srcAppCode',
+                  dataIndex: 'srcAppCode',
+                  width: 150,
+                },
+                {
+                  title: 'srcIp',
+                  dataIndex: 'srcIp',
+                  width: 150,
+                },
+                {
+                    title: 'logTime1',
+                    dataIndex: 'logTime1',
+                    width: 150,
+                },
+                {
+                    title: 'inData',
+                    dataIndex: 'inData',
+                    width: 300,
+                },
+                {
+                    title: 'outData',
+                    dataIndex: 'outData',
+                    width: 300,
+                },
+              ],
+              inData:"",
+              logTimeBegin:"2020-08-31",
+              logTimeEnd:"2020-09-01",
+          }
+    }
+
+    componentWillMount(){
+
+        this.setState({
+            inData:"",
+            logTimeBegin:"2020-08-31",
+            logTimeEnd:"2020-09-01"
+        })
+         
+    }
+
+    handleSelectTime=(value,dateString)=>{
+        if(dateString[0]){
+            this.setState({
+                logTimeBegin:dateString[0],
+                logTimeEnd:dateString[1],
+            })
+        }         
+    }
+
+    handleKeyword = (e)=>{
+        //console.log(e.target.value)
+        this.setState({
+            inData:e.target.value,
+        })
+    }
+
+    onQuery=()=>{
+        const {inData,logTimeBegin,logTimeEnd} =this.state;
+        this.child.loadData({inData,logTimeBegin,logTimeEnd});
+    }
+
+    onRef = (ref) => {
+        this.child = ref
+    }
+
+    render() { 
+        const {inData,logTimeBegin,logTimeEnd} =this.state;
+
+        return ( 
+            <Fragment>
+            <Form layout="inline" style={{marginTop:'20px'}}>
+                <Form.Item label="调用时间">
+                   <RangePicker  onChange={this.handleSelectTime} />
+                </Form.Item>
+                <Form.Item label="关键字">
+                    <Input onChange={this.handleKeyword} placeholder="input placeholder" />
+                </Form.Item>
+                <Form.Item>
+                    <Button type="primary" onClick={this.onQuery}>查询</Button>
+                </Form.Item>
+            </Form>
+            <div style={{margin:'10px'}}></div>
+            <TableCommon 
+                condition={{inData,logTimeBegin,logTimeEnd}} 
+                columns={this.state.columns} 
+                url='/esblog/list'  
+                rowKey="requestId" 
+                deleteurl='/esblog/delete'
+                onRef={this.onRef}  />
+        </Fragment>
+        );
+    }
+}
+ 
+export default EsblogList;
+```
+
+
+
+
+
+
+
+
+
+### 21.5 this.setState 回调函数
+
+
+
+```js
+this.setState({
+        pageNumer:value
+    },()=>{
+        //回调事件
+    }
+)
+```
 
 
 
