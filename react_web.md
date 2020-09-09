@@ -1926,3 +1926,9 @@ this.setState({
 
 
 
+## 22.form表单封装
+
+
+
+调用函数 this.initFormItem 与this.initFormItem()的区别 ？
+
